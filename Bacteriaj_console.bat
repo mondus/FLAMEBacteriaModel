@@ -1,0 +1,1 @@
+Release_Console\Bacteriaj.exe "..\..\examples\Bacteriaj\iterations\0.xml" 1000

@@ -1,0 +1,1015 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gpu:xmodel xmlns:gpu="http://www.dcs.shef.ac.uk/~paul/XMMLGPU"
+    xmlns="http://www.dcs.shef.ac.uk/~paul/XMML">
+
+  <name>Body</name>
+    <gpu:environment>
+      <gpu:constants>
+          <gpu:variable>
+             <type>int</type>
+             <name>size</name>
+         </gpu:variable>
+         <gpu:variable>
+             <type>int</type>
+             <name>itEquiv</name>
+         </gpu:variable>
+      </gpu:constants>
+
+      <gpu:functionFiles>
+        <file>functions.c</file>
+      </gpu:functionFiles>
+      <gpu:initFunctions>
+          <gpu:initFunction>
+            <gpu:name>setConstants</gpu:name>
+        </gpu:initFunction>
+      </gpu:initFunctions>
+    </gpu:environment>
+
+    <xagents>
+
+    <gpu:xagent>
+      <name>TissueCell</name>
+      <memory>
+        <gpu:variable>
+          <type>int</type>
+          <name>x</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>int</type>
+          <name>y</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>int</type>
+          <name>agent_id</name>
+        </gpu:variable>
+
+        <!-- agent specific variables-->
+        <gpu:variable>
+          <type>int</type>
+          <name>debug</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>int</type>
+          <name>state</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>int</type>
+          <name>status</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>int</type>
+          <name>timecount</name>
+        </gpu:variable>
+
+        <!-- message specific variables-->
+
+        <gpu:variable>
+          <type>int</type>
+          <name>antibiotic_x</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>int</type>
+          <name>antibiotic_y</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>float</type>
+          <name>antibiotic_value</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>int</type>
+          <name>antibiotic_time</name>
+        </gpu:variable>
+
+        <gpu:variable>
+          <type>int</type>
+          <name>citokine_x</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>int</type>
+          <name>citokine_y</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>float</type>
+          <name>citokine_value</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>int</type>
+          <name>citokine_time</name>
+        </gpu:variable>
+
+      </memory>
+
+      <functions>
+
+        <gpu:function>
+          <name>TissueCell_input_bacteria</name>
+          <description>checks others agents</description>
+          <currentState>default</currentState>
+          <nextState>default</nextState>
+          <inputs>
+            <gpu:input>
+              <messageName>bacteriaInfo</messageName>
+            </gpu:input>
+          </inputs>
+          <gpu:reallocate>false</gpu:reallocate>
+          <gpu:RNG>false</gpu:RNG>
+        </gpu:function>
+
+        <gpu:function>
+          <name>TissueCell_input_antibiotic</name>
+          <description>checks environment</description>
+          <currentState>default</currentState>
+          <nextState>default</nextState>
+          <inputs>
+            <gpu:input>
+              <messageName>antibiotic</messageName>
+            </gpu:input>
+          </inputs>
+          <gpu:reallocate>false</gpu:reallocate>
+          <gpu:RNG>false</gpu:RNG>
+        </gpu:function>
+
+        <gpu:function>
+          <name>TissueCell_output_antibiotic</name>
+          <description>outputs the state of the TissueCell</description>
+          <currentState>default</currentState>
+          <nextState>default</nextState>
+          <outputs>
+            <gpu:output>
+              <messageName>antibiotic</messageName>
+              <gpu:type>single_message</gpu:type>
+            </gpu:output>
+          </outputs>
+          <gpu:reallocate>false</gpu:reallocate>
+          <gpu:RNG>false</gpu:RNG>
+        </gpu:function>
+
+        <gpu:function>
+          <name>TissueCell_input_citokine</name>
+          <description>checks environment</description>
+          <currentState>default</currentState>
+          <nextState>default</nextState>
+          <inputs>
+            <gpu:input>
+              <messageName>citokine</messageName>
+            </gpu:input>
+          </inputs>
+          <gpu:reallocate>false</gpu:reallocate>
+          <gpu:RNG>false</gpu:RNG>
+        </gpu:function>
+
+        <gpu:function>
+          <name>TissueCell_output_citokine</name>
+          <description>outputs the state of the TissueCell</description>
+          <currentState>default</currentState>
+          <nextState>default</nextState>
+          <outputs>
+            <gpu:output>
+              <messageName>citokine</messageName>
+              <gpu:type>single_message</gpu:type>
+            </gpu:output>
+          </outputs>
+          <gpu:reallocate>false</gpu:reallocate>
+          <gpu:RNG>false</gpu:RNG>
+        </gpu:function>
+
+      </functions>
+
+      <states>
+        <gpu:state>
+          <name>default</name>
+        </gpu:state>
+        <initialState>default</initialState>
+      </states>
+
+      <gpu:type>discrete</gpu:type>
+      <gpu:bufferSize>262144</gpu:bufferSize>
+    </gpu:xagent>
+
+        <!-- +++++++++++++++++++++++++++++++++++++++++++++++
+                bacteria
+             +++++++++++++++++++++++++++++++++++++++++++++++ -->
+        <gpu:xagent>
+          <name>bacteria</name>
+
+      <memory>
+         <gpu:variable>
+           <type>float</type>
+           <name>x</name>
+         </gpu:variable>
+         <gpu:variable>
+          <type>float</type>
+          <name>y</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>float</type>
+          <name>z</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>int</type>
+          <name>agent_id</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>int</type>
+          <name>type</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>int</type>
+          <name>pattern</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>int</type>
+          <name>state</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>int</type>
+          <name>nearagents</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>float</type>
+          <name>value</name>
+        </gpu:variable>
+
+        <gpu:variable>
+          <type>int</type>
+          <name>lifetime</name>
+        </gpu:variable>
+
+        <gpu:variable>
+          <type>int</type>
+          <name>nAntibodyAttached</name>
+        </gpu:variable>
+
+        <gpu:variable>
+          <type>int</type>
+          <name>deathSignal</name>
+        </gpu:variable>
+
+        <gpu:variable>
+          <type>float</type>
+          <name>antibiotic</name>
+        </gpu:variable>
+
+        <gpu:variable>
+          <type>int</type>
+          <name>infecting</name>
+        </gpu:variable>
+
+        <gpu:variable>
+          <type>int</type>
+          <name>timeInfecting</name>
+        </gpu:variable>
+
+        <gpu:variable>
+          <type>int</type>
+          <name>dividingTime</name>
+        </gpu:variable>
+
+        <gpu:variable>
+          <type>float</type>
+          <name>antibiotic_x</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>float</type>
+          <name>antibiotic_y</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>float</type>
+          <name>antibiotic_value</name>
+        </gpu:variable> 
+
+        <gpu:variable>
+          <type>float</type>
+          <name>macrophage_x</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>float</type>
+          <name>macrophage_y</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>float</type>
+          <name>macrophage_value</name>
+        </gpu:variable> 
+
+      </memory>
+
+          <functions>
+
+    <gpu:function>
+      <name>bacteria_processing</name>
+      <description> Process the memory</description>
+      <currentState>bacteriaActing</currentState>
+      <nextState>bacteriaActing</nextState>
+      <gpu:reallocate>false</gpu:reallocate>
+      <gpu:RNG>true</gpu:RNG>
+    </gpu:function>
+
+            <gpu:function>
+              <name>bacteria_move</name>
+              <description> move bacteria</description>
+              <currentState>bacteriaMoving</currentState>
+              <nextState>bacteriaMoving</nextState>
+
+              <condition>
+                <lhs>
+                  <agentVariable>infecting</agentVariable>
+                </lhs>
+                <operator>==</operator>
+                <rhs>
+                  <value>0</value>
+                </rhs>
+              </condition>
+
+              <gpu:reallocate>false</gpu:reallocate>
+              <gpu:RNG>true</gpu:RNG>
+            </gpu:function>
+
+            <gpu:function>
+              <name>bacteria_divide</name>
+              <description> divide bacteria</description>
+              <currentState>bacteriaActing</currentState>
+              <nextState>bacteriaActing</nextState>
+
+              <xagentOutputs>
+                <gpu:xagentOutput>
+                  <xagentName>bacteria</xagentName>
+                  <state>bacteriaActing</state>
+                </gpu:xagentOutput>
+              </xagentOutputs>
+
+              <condition>
+                <lhs>
+                  <agentVariable>dividingTime</agentVariable>
+                </lhs>
+                <operator>==</operator>
+                <rhs>
+                  <value>1</value>
+                </rhs>
+              </condition>
+
+              <gpu:reallocate>false</gpu:reallocate>
+              <gpu:RNG>true</gpu:RNG>
+            </gpu:function>
+
+            <gpu:function>
+              <name>bacteria_infect</name>
+              <description> infect bacteria</description>
+              <currentState>bacteriaActing</currentState>
+              <nextState>bacteriaActing</nextState>
+
+              <gpu:reallocate>false</gpu:reallocate>
+              <gpu:RNG>false</gpu:RNG>
+            </gpu:function>
+
+            <gpu:function>
+              <name>bacteria_die</name>
+              <description> die bacteria</description>
+              <currentState>bacteriaActing</currentState>
+              <nextState>bacteriaDying</nextState>
+
+              <condition>
+                <lhs>
+                  <agentVariable>deathSignal</agentVariable>
+                </lhs>
+                <operator>==</operator>
+                <rhs>
+                  <value>1</value>
+                </rhs>
+              </condition>
+
+              <gpu:reallocate>true</gpu:reallocate>
+              <gpu:RNG>false</gpu:RNG>
+            </gpu:function>
+
+            <gpu:function>
+              <name>bacteria_output</name>
+              <description> bacteria output info</description>
+              <currentState>bacteriaEmiting</currentState>
+              <nextState>bacteriaEmiting</nextState>
+              <outputs>
+                <gpu:output>
+                  <messageName>bacteriaInfo</messageName>
+                  <gpu:type>single_message</gpu:type>
+                </gpu:output>
+              </outputs>
+              <gpu:reallocate>false</gpu:reallocate>
+              <gpu:RNG>false</gpu:RNG>
+            </gpu:function>
+
+            <gpu:function>
+              <name>bacteria_input_antibiotic</name>
+              <description> bacteria input antibiotic</description>
+              <currentState>bacteriaSensing</currentState>
+              <nextState>bacteriaSensing</nextState>
+              <inputs>
+                <gpu:input>
+                  <messageName>antibiotic</messageName>
+                  <gpu:type>single_message</gpu:type>
+                </gpu:input>
+              </inputs>
+              <gpu:reallocate>false</gpu:reallocate>
+              <gpu:RNG>false</gpu:RNG>
+            </gpu:function>
+
+            <gpu:function>
+              <name>bacteria_input_macrophage</name>
+              <description> bacteria input agents info</description>
+              <currentState>bacteriaSensing</currentState>
+              <nextState>bacteriaSensing</nextState>
+              <inputs>
+                <gpu:input>
+                  <messageName>macrophageInfo</messageName>
+                  <gpu:type>single_message</gpu:type>
+                </gpu:input>
+              </inputs>
+              <gpu:reallocate>false</gpu:reallocate>
+              <gpu:RNG>false</gpu:RNG>
+            </gpu:function>
+
+            <gpu:function>
+              <name>bacteria_MovingToEmiting</name>
+              <description>change state Moving To Emiting</description>
+              <currentState>bacteriaMoving</currentState>
+              <nextState>bacteriaEmiting</nextState>
+              <gpu:reallocate>false</gpu:reallocate>
+              <gpu:RNG>false</gpu:RNG>
+            </gpu:function>
+
+            <gpu:function>
+              <name>bacteria_EmitingToSensing</name>
+              <description>change state Emiting To Sensing</description>
+              <currentState>bacteriaEmiting</currentState>
+              <nextState>bacteriaSensing</nextState>
+              <gpu:reallocate>false</gpu:reallocate>
+              <gpu:RNG>false</gpu:RNG>
+            </gpu:function>
+
+            <gpu:function>
+              <name>bacteria_SensingToActing</name>
+              <description>change state Sensing To Acting</description>
+              <currentState>bacteriaSensing</currentState>
+              <nextState>bacteriaActing</nextState>
+              <gpu:reallocate>false</gpu:reallocate>
+              <gpu:RNG>false</gpu:RNG>
+            </gpu:function>
+
+            <gpu:function>
+              <name>bacteria_ActingToMoving</name>
+              <description>change state Acting To Moving</description>
+              <currentState>bacteriaActing</currentState>
+              <nextState>bacteriaMoving</nextState>
+              <gpu:reallocate>false</gpu:reallocate>
+              <gpu:RNG>false</gpu:RNG>
+            </gpu:function>
+
+          </functions>
+
+          <states>
+
+            <gpu:state>
+              <name>bacteriaMoving</name>
+            </gpu:state>
+
+            <gpu:state>
+              <name>bacteriaDying</name>
+            </gpu:state>
+
+            <gpu:state>
+              <name>bacteriaEmiting</name>
+            </gpu:state>
+            <gpu:state>
+              <name>bacteriaSensing</name>
+            </gpu:state>
+            <gpu:state>
+              <name>bacteriaActing</name>
+            </gpu:state>
+
+            <initialState>bacteriaMoving</initialState>
+
+          </states>
+
+          <gpu:type>continuous</gpu:type>
+          <gpu:bufferSize>262144</gpu:bufferSize>
+
+        </gpu:xagent>
+
+        <!-- +++++++++++++++++++++++++++++++++++++++++++++++
+                macrophage
+             +++++++++++++++++++++++++++++++++++++++++++++++ -->
+        <gpu:xagent>
+          <name>macrophage</name>
+
+      <memory>
+         <gpu:variable>
+           <type>float</type>
+           <name>x</name>
+         </gpu:variable>
+         <gpu:variable>
+          <type>float</type>
+          <name>y</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>float</type>
+          <name>z</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>int</type>
+          <name>agent_id</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>int</type>
+          <name>type</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>int</type>
+          <name>pattern</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>int</type>
+          <name>state</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>int</type>
+          <name>nearagents</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>float</type>
+          <name>value</name>
+        </gpu:variable>
+
+        <gpu:variable>
+          <type>int</type>
+          <name>activated</name>
+        </gpu:variable>
+
+        <gpu:variable>
+          <type>int</type>
+          <name>timeActivated</name>
+        </gpu:variable>
+
+        <gpu:variable>
+          <type>float</type>
+          <name>infectionSite_target_x</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>float</type>
+          <name>infectionSite_target_y</name>
+        </gpu:variable>
+
+        <gpu:variable>
+          <type>float</type>
+          <name>citokine_x</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>float</type>
+          <name>citokine_y</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>float</type>
+          <name>citokine_value</name>
+        </gpu:variable> 
+
+      </memory>
+
+          <functions>
+
+    <gpu:function>
+      <name>macrophage_processing</name>
+      <description> Process the memory</description>
+      <currentState>macrophageActing</currentState>
+      <nextState>macrophageActing</nextState>
+      <gpu:reallocate>false</gpu:reallocate>
+      <gpu:RNG>true</gpu:RNG>
+    </gpu:function>
+
+            <gpu:function>
+              <name>macrophage_move</name>
+              <description> move macrophage</description>
+              <currentState>macrophageMoving</currentState>
+              <nextState>macrophageMoving</nextState>
+
+              <condition>
+                <lhs>
+                  <agentVariable>activated</agentVariable>
+                </lhs>
+                <operator>==</operator>
+                <rhs>
+                  <value>0</value>
+                </rhs>
+              </condition>
+
+              <gpu:reallocate>false</gpu:reallocate>
+              <gpu:RNG>true</gpu:RNG>
+            </gpu:function>
+
+            <gpu:function>
+              <name>macrophage_directedMove</name>
+              <description> directedMove macrophage</description>
+              <currentState>macrophageMoving</currentState>
+              <nextState>macrophageMoving</nextState>
+
+              <condition>
+                <lhs>
+                  <agentVariable>activated</agentVariable>
+                </lhs>
+                <operator>==</operator>
+                <rhs>
+                  <value>1</value>
+                </rhs>
+              </condition>
+
+              <gpu:reallocate>false</gpu:reallocate>
+              <gpu:RNG>true</gpu:RNG>
+            </gpu:function>
+
+            <gpu:function>
+              <name>macrophage_output</name>
+              <description> macrophage output info</description>
+              <currentState>macrophageEmiting</currentState>
+              <nextState>macrophageEmiting</nextState>
+              <outputs>
+                <gpu:output>
+                  <messageName>macrophageInfo</messageName>
+                  <gpu:type>single_message</gpu:type>
+                </gpu:output>
+              </outputs>
+              <gpu:reallocate>false</gpu:reallocate>
+              <gpu:RNG>false</gpu:RNG>
+            </gpu:function>
+
+            <gpu:function>
+              <name>macrophage_input_citokine</name>
+              <description> macrophage input citokine</description>
+              <currentState>macrophageSensing</currentState>
+              <nextState>macrophageSensing</nextState>
+              <inputs>
+                <gpu:input>
+                  <messageName>citokine</messageName>
+                  <gpu:type>single_message</gpu:type>
+                </gpu:input>
+              </inputs>
+              <gpu:reallocate>false</gpu:reallocate>
+              <gpu:RNG>false</gpu:RNG>
+            </gpu:function>
+
+            <gpu:function>
+              <name>macrophage_MovingToEmiting</name>
+              <description>change state Moving To Emiting</description>
+              <currentState>macrophageMoving</currentState>
+              <nextState>macrophageEmiting</nextState>
+              <gpu:reallocate>false</gpu:reallocate>
+              <gpu:RNG>false</gpu:RNG>
+            </gpu:function>
+
+            <gpu:function>
+              <name>macrophage_EmitingToSensing</name>
+              <description>change state Emiting To Sensing</description>
+              <currentState>macrophageEmiting</currentState>
+              <nextState>macrophageSensing</nextState>
+              <gpu:reallocate>false</gpu:reallocate>
+              <gpu:RNG>false</gpu:RNG>
+            </gpu:function>
+
+            <gpu:function>
+              <name>macrophage_SensingToActing</name>
+              <description>change state Sensing To Acting</description>
+              <currentState>macrophageSensing</currentState>
+              <nextState>macrophageActing</nextState>
+              <gpu:reallocate>false</gpu:reallocate>
+              <gpu:RNG>false</gpu:RNG>
+            </gpu:function>
+
+            <gpu:function>
+              <name>macrophage_ActingToMoving</name>
+              <description>change state Acting To Moving</description>
+              <currentState>macrophageActing</currentState>
+              <nextState>macrophageMoving</nextState>
+              <gpu:reallocate>false</gpu:reallocate>
+              <gpu:RNG>false</gpu:RNG>
+            </gpu:function>
+
+          </functions>
+
+          <states>
+
+            <gpu:state>
+              <name>macrophageMoving</name>
+            </gpu:state>
+
+            <gpu:state>
+              <name>macrophageEmiting</name>
+            </gpu:state>
+            <gpu:state>
+              <name>macrophageSensing</name>
+            </gpu:state>
+            <gpu:state>
+              <name>macrophageActing</name>
+            </gpu:state>
+
+            <initialState>macrophageMoving</initialState>
+
+          </states>
+
+          <gpu:type>continuous</gpu:type>
+          <gpu:bufferSize>16384</gpu:bufferSize>
+
+        </gpu:xagent>
+
+    </xagents>
+
+  <messages>
+
+    <gpu:message>
+      <name>antibiotic</name>
+      <variables>
+        <gpu:variable>
+          <type>int</type>
+          <name>x</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>int</type>
+          <name>y</name>
+        </gpu:variable>
+
+        <gpu:variable>
+          <type>int</type>
+          <name>antibiotic_x</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>int</type>
+          <name>antibiotic_y</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>int</type>
+          <name>antibiotic_time</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>float</type>
+          <name>antibiotic_value</name>
+        </gpu:variable>
+      </variables>
+     <gpu:partitioningDiscrete>
+        <gpu:radius>1</gpu:radius>
+      </gpu:partitioningDiscrete>
+      <gpu:bufferSize>262144</gpu:bufferSize>
+    </gpu:message>
+
+    <gpu:message>
+      <name>citokine</name>
+      <variables>
+        <gpu:variable>
+          <type>int</type>
+          <name>x</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>int</type>
+          <name>y</name>
+        </gpu:variable>
+
+        <gpu:variable>
+          <type>int</type>
+          <name>citokine_x</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>int</type>
+          <name>citokine_y</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>int</type>
+          <name>citokine_time</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>float</type>
+          <name>citokine_value</name>
+        </gpu:variable>
+      </variables>
+     <gpu:partitioningDiscrete>
+        <gpu:radius>1</gpu:radius>
+      </gpu:partitioningDiscrete>
+      <gpu:bufferSize>262144</gpu:bufferSize>
+    </gpu:message>
+
+    <gpu:message>
+      <name>bacteriaInfo</name>
+      <variables>
+        <gpu:variable>
+          <type>float</type>
+          <name>x</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>float</type>
+          <name>y</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>float</type>
+          <name>z</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>int</type>
+          <name>type</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>int</type>
+          <name>ivalue</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>float</type>
+          <name>value</name>
+        </gpu:variable>
+
+      </variables>
+      <gpu:partitioningSpatial>
+        <gpu:radius>1.0</gpu:radius>
+        <gpu:xmin>0.0</gpu:xmin>
+        <gpu:xmax>512.0</gpu:xmax>
+        <gpu:ymin>0.0</gpu:ymin>
+        <gpu:ymax>512.0</gpu:ymax>
+        <gpu:zmin>0.0</gpu:zmin>
+        <gpu:zmax>1.0</gpu:zmax>
+       </gpu:partitioningSpatial>
+      <gpu:bufferSize>262144</gpu:bufferSize>
+    </gpu:message>
+
+    <gpu:message>
+      <name>macrophageInfo</name>
+      <variables>
+        <gpu:variable>
+          <type>float</type>
+          <name>x</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>float</type>
+          <name>y</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>float</type>
+          <name>z</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>int</type>
+          <name>type</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>int</type>
+          <name>ivalue</name>
+        </gpu:variable>
+        <gpu:variable>
+          <type>float</type>
+          <name>value</name>
+        </gpu:variable>
+
+      </variables>
+      <gpu:partitioningSpatial>
+        <gpu:radius>1.0</gpu:radius>
+        <gpu:xmin>0.0</gpu:xmin>
+        <gpu:xmax>512.0</gpu:xmax>
+        <gpu:ymin>0.0</gpu:ymin>
+        <gpu:ymax>512.0</gpu:ymax>
+        <gpu:zmin>0.0</gpu:zmin>
+        <gpu:zmax>1.0</gpu:zmax>
+       </gpu:partitioningSpatial>
+      <gpu:bufferSize>16384</gpu:bufferSize>
+    </gpu:message>
+
+  </messages>
+
+ <layers>
+
+    <layer>
+
+      <gpu:layerFunction>
+        <name>bacteria_move</name>
+      </gpu:layerFunction>
+
+      <gpu:layerFunction>
+        <name>macrophage_move</name>
+      </gpu:layerFunction>
+
+      <gpu:layerFunction>
+        <name>macrophage_directedMove</name>
+      </gpu:layerFunction>
+
+    </layer>
+
+    <layer>
+
+      <gpu:layerFunction>
+        <name>bacteria_MovingToEmiting</name>
+      </gpu:layerFunction>
+
+      <gpu:layerFunction>
+        <name>macrophage_MovingToEmiting</name>
+      </gpu:layerFunction>
+
+    </layer>
+
+    <layer>
+
+      <gpu:layerFunction>
+        <name>TissueCell_output_antibiotic</name>
+      </gpu:layerFunction>
+
+      <gpu:layerFunction>
+        <name>TissueCell_output_citokine</name>
+      </gpu:layerFunction>
+
+      <gpu:layerFunction>
+        <name>bacteria_output</name>
+      </gpu:layerFunction>
+
+      <gpu:layerFunction>
+        <name>macrophage_output</name>
+      </gpu:layerFunction>
+
+    </layer>
+
+    <layer>
+
+      <gpu:layerFunction>
+        <name>bacteria_EmitingToSensing</name>
+      </gpu:layerFunction>
+
+      <gpu:layerFunction>
+        <name>macrophage_EmitingToSensing</name>
+      </gpu:layerFunction>
+
+    </layer>
+
+    <layer>
+
+      <gpu:layerFunction>
+        <name>TissueCell_input_bacteria</name>
+      </gpu:layerFunction>
+
+      <gpu:layerFunction>
+        <name>TissueCell_input_antibiotic</name>
+      </gpu:layerFunction>
+
+      <gpu:layerFunction>
+        <name>TissueCell_input_citokine</name>
+      </gpu:layerFunction>
+
+      <gpu:layerFunction>
+        <name>bacteria_input_antibiotic</name>
+      </gpu:layerFunction>
+
+      <gpu:layerFunction>
+        <name>bacteria_input_macrophage</name>
+      </gpu:layerFunction>
+
+      <gpu:layerFunction>
+        <name>macrophage_input_citokine</name>
+      </gpu:layerFunction>
+
+    </layer>
+
+    <layer>
+
+      <gpu:layerFunction>
+        <name>bacteria_SensingToActing</name>
+      </gpu:layerFunction>
+
+      <gpu:layerFunction>
+        <name>macrophage_SensingToActing</name>
+      </gpu:layerFunction>
+
+    </layer>
+
+    <layer>
+
+      <gpu:layerFunction>
+        <name>bacteria_processing</name>
+      </gpu:layerFunction>
+
+      <gpu:layerFunction>
+        <name>bacteria_divide</name>
+      </gpu:layerFunction>
+
+      <gpu:layerFunction>
+        <name>bacteria_infect</name>
+      </gpu:layerFunction>
+
+      <gpu:layerFunction>
+        <name>bacteria_die</name>
+      </gpu:layerFunction>
+
+      <gpu:layerFunction>
+        <name>macrophage_processing</name>
+      </gpu:layerFunction>
+
+    </layer>
+
+    <layer>
+
+      <gpu:layerFunction>
+        <name>bacteria_ActingToMoving</name>
+      </gpu:layerFunction>
+
+      <gpu:layerFunction>
+        <name>macrophage_ActingToMoving</name>
+      </gpu:layerFunction>
+
+    </layer>
+
+  </layers>
+</gpu:xmodel>

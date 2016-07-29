@@ -1,0 +1,102 @@
+digraph model {
+subgraph cluster_0{
+ label="TissueCell:discrete";color=blue; 
+
+   TissueCell_inputAg [shape=box];
+   agInfo -> TissueCell_inputAg [color=green];
+   TissueCell_input_antibiotic [shape=box];
+   antibiotic -> TissueCell_input_antibiotic [color=green];
+   TissueCell_output_antibiotic [shape=box];
+   TissueCell_output_antibiotic -> antibiotic [color=green];
+   TissueCell_input_citokine [shape=box];
+   citokine -> TissueCell_input_citokine [color=green];
+   TissueCell_output_citokine [shape=box];
+   TissueCell_output_citokine -> citokine [color=green];
+   "default" -> TissueCell_output_antibiotic ;
+   TissueCell_output_antibiotic -> "default'";
+   "default'" -> TissueCell_output_citokine ;
+   TissueCell_output_citokine -> "default''";
+   "default''" -> TissueCell_inputAg ;
+   TissueCell_inputAg -> "default'''";
+   "default'''" -> TissueCell_input_antibiotic ;
+   TissueCell_input_antibiotic -> "default''''";
+   "default''''" -> TissueCell_input_citokine ;
+   TissueCell_input_citokine -> "default'''''";
+}
+
+subgraph cluster_1{
+ label="bacteria:continuous";color=blue; 
+
+   bacteria_move [shape=box];
+   bacteria_divide [shape=box];
+   bacteria_infect [shape=box];
+   bacteria_die [shape=box];
+   bacteria_output [shape=box];
+   bacteria_output -> agInfo [color=green];
+   bacteria_input_antibiotic [shape=box];
+   antibiotic -> bacteria_input_antibiotic [color=green];
+   bacteria_inputAg [shape=box];
+   agInfo -> bacteria_inputAg [color=green];
+   bacteria_MovingToEmiting [shape=box];
+   bacteria_EmitingToSensing [shape=box];
+   bacteria_SensingToActing [shape=box];
+   bacteria_ActingToMoving [shape=box];
+   "bacteriaMoving" -> bacteria_move [ label ="infecting==0"];
+   bacteria_move -> "bacteriaMoving'";
+   "bacteriaMoving'" -> bacteria_MovingToEmiting [ label ="state==1"];
+   bacteria_MovingToEmiting -> "bacteriaEmiting";
+   "bacteriaEmiting" -> bacteria_output ;
+   bacteria_output -> "bacteriaEmiting'";
+   "bacteriaEmiting'" -> bacteria_EmitingToSensing [ label ="state==2"];
+   bacteria_EmitingToSensing -> "bacteriaSensing";
+   "bacteriaSensing" -> bacteria_input_antibiotic ;
+   bacteria_input_antibiotic -> "bacteriaSensing'";
+   "bacteriaSensing'" -> bacteria_inputAg ;
+   bacteria_inputAg -> "bacteriaSensing''";
+   "bacteriaSensing''" -> bacteria_SensingToActing [ label ="state==3"];
+   bacteria_SensingToActing -> "bacteriaActing";
+   "bacteriaActing" -> bacteria_divide [ label ="dividingTime==1"];
+   bacteria_divide -> "bacteriaActing'";
+   "bacteriaActing'" -> bacteria_infect ;
+   bacteria_infect -> "bacteriaActing''";
+   "bacteriaActing''" -> bacteria_die [ label ="deathsignal==1"];
+   bacteria_die -> "bacteriaActing'''";
+   "bacteriaActing'''" -> bacteria_ActingToMoving [ label ="state==4"];
+   bacteria_ActingToMoving -> "bacteriaMoving";
+}
+
+subgraph cluster_2{
+ label="macrophage:continuous";color=blue; 
+
+   macrophage_move [shape=box];
+   macrophage_directedMove [shape=box];
+   macrophage_output [shape=box];
+   macrophage_output -> agInfo [color=green];
+   macrophage_input_citokine [shape=box];
+   citokine -> macrophage_input_citokine [color=green];
+   macrophage_MovingToEmiting [shape=box];
+   macrophage_EmitingToSensing [shape=box];
+   macrophage_SensingToActing [shape=box];
+   macrophage_ActingToMoving [shape=box];
+   "macrophageMoving" -> macrophage_move [ label ="activated==0"];
+   macrophage_move -> "macrophageMoving'";
+   "macrophageMoving'" -> macrophage_directedMove [ label ="activated==1"];
+   macrophage_directedMove -> "macrophageMoving''";
+   "macrophageMoving''" -> macrophage_MovingToEmiting [ label ="state==1"];
+   macrophage_MovingToEmiting -> "macrophageEmiting";
+   "macrophageEmiting" -> macrophage_output ;
+   macrophage_output -> "macrophageEmiting'";
+   "macrophageEmiting'" -> macrophage_EmitingToSensing [ label ="state==2"];
+   macrophage_EmitingToSensing -> "macrophageSensing";
+   "macrophageSensing" -> macrophage_input_citokine ;
+   macrophage_input_citokine -> "macrophageSensing'";
+   "macrophageSensing'" -> macrophage_SensingToActing [ label ="state==3"];
+   macrophage_SensingToActing -> "macrophageActing";
+   "macrophageActing" -> macrophage_ActingToMoving [ label ="state==4"];
+   macrophage_ActingToMoving -> "macrophageMoving";
+}
+
+   agInfo [shape=box][shape=diamond, label=agInfo, fontcolor=green, color=green];
+   antibiotic [shape=box][shape=diamond, label=antibiotic, fontcolor=green, color=green];
+   citokine [shape=box][shape=diamond, label=citokine, fontcolor=green, color=green];
+}

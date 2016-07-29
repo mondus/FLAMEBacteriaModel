@@ -1,0 +1,109 @@
+digraph model {
+subgraph cluster_0{
+ label="TissueCell:discrete";color=blue; 
+
+   TissueCell_input_bacteria [shape=box];
+   bacteriaInfo -> TissueCell_input_bacteria [color=green];
+   TissueCell_input_antibiotic [shape=box];
+   antibiotic -> TissueCell_input_antibiotic [color=green];
+   TissueCell_output_antibiotic [shape=box];
+   TissueCell_output_antibiotic -> antibiotic [color=green];
+   TissueCell_input_citokine [shape=box];
+   citokine -> TissueCell_input_citokine [color=green];
+   TissueCell_output_citokine [shape=box];
+   TissueCell_output_citokine -> citokine [color=green];
+   "default" -> TissueCell_output_antibiotic ;
+   TissueCell_output_antibiotic -> "default'";
+   "default'" -> TissueCell_output_citokine ;
+   TissueCell_output_citokine -> "default''";
+   "default''" -> TissueCell_input_bacteria ;
+   TissueCell_input_bacteria -> "default'''";
+   "default'''" -> TissueCell_input_antibiotic ;
+   TissueCell_input_antibiotic -> "default''''";
+   "default''''" -> TissueCell_input_citokine ;
+   TissueCell_input_citokine -> "default'''''";
+}
+
+subgraph cluster_1{
+ label="bacteria:continuous";color=blue; 
+
+   bacteria_processing [shape=box];
+   bacteria_move [shape=box];
+   bacteria_divide [shape=box];
+   bacteria_infect [shape=box];
+   bacteria_die [shape=box];
+   bacteria_output [shape=box];
+   bacteria_output -> bacteriaInfo [color=green];
+   bacteria_input_antibiotic [shape=box];
+   antibiotic -> bacteria_input_antibiotic [color=green];
+   bacteria_input_macrophage [shape=box];
+   macrophageInfo -> bacteria_input_macrophage [color=green];
+   bacteria_MovingToEmiting [shape=box];
+   bacteria_EmitingToSensing [shape=box];
+   bacteria_SensingToActing [shape=box];
+   bacteria_ActingToMoving [shape=box];
+   "bacteriaMoving" -> bacteria_move [ label ="infecting==0"];
+   bacteria_move -> "bacteriaMoving'";
+   "bacteriaMoving'" -> bacteria_MovingToEmiting ;
+   bacteria_MovingToEmiting -> "bacteriaEmiting";
+   "bacteriaEmiting" -> bacteria_output ;
+   bacteria_output -> "bacteriaEmiting'";
+   "bacteriaEmiting'" -> bacteria_EmitingToSensing ;
+   bacteria_EmitingToSensing -> "bacteriaSensing";
+   "bacteriaSensing" -> bacteria_input_antibiotic ;
+   bacteria_input_antibiotic -> "bacteriaSensing'";
+   "bacteriaSensing'" -> bacteria_input_macrophage ;
+   bacteria_input_macrophage -> "bacteriaSensing''";
+   "bacteriaSensing''" -> bacteria_SensingToActing ;
+   bacteria_SensingToActing -> "bacteriaActing";
+   "bacteriaActing" -> bacteria_processing ;
+   bacteria_processing -> "bacteriaActing'";
+   "bacteriaActing'" -> bacteria_divide [ label ="dividingTime==1"];
+   bacteria_divide -> "bacteriaActing''";
+   "bacteriaActing''" -> bacteria_infect ;
+   bacteria_infect -> "bacteriaActing'''";
+   "bacteriaActing'''" -> bacteria_die [ label ="deathSignal==1"];
+   bacteria_die -> "bacteriaDying";
+   "bacteriaActing'''" -> bacteria_ActingToMoving ;
+   bacteria_ActingToMoving -> "bacteriaMoving";
+}
+
+subgraph cluster_2{
+ label="macrophage:continuous";color=blue; 
+
+   macrophage_processing [shape=box];
+   macrophage_move [shape=box];
+   macrophage_directedMove [shape=box];
+   macrophage_output [shape=box];
+   macrophage_output -> macrophageInfo [color=green];
+   macrophage_input_citokine [shape=box];
+   citokine -> macrophage_input_citokine [color=green];
+   macrophage_MovingToEmiting [shape=box];
+   macrophage_EmitingToSensing [shape=box];
+   macrophage_SensingToActing [shape=box];
+   macrophage_ActingToMoving [shape=box];
+   "macrophageMoving" -> macrophage_move [ label ="activated==0"];
+   macrophage_move -> "macrophageMoving'";
+   "macrophageMoving'" -> macrophage_directedMove [ label ="activated==1"];
+   macrophage_directedMove -> "macrophageMoving''";
+   "macrophageMoving''" -> macrophage_MovingToEmiting ;
+   macrophage_MovingToEmiting -> "macrophageEmiting";
+   "macrophageEmiting" -> macrophage_output ;
+   macrophage_output -> "macrophageEmiting'";
+   "macrophageEmiting'" -> macrophage_EmitingToSensing ;
+   macrophage_EmitingToSensing -> "macrophageSensing";
+   "macrophageSensing" -> macrophage_input_citokine ;
+   macrophage_input_citokine -> "macrophageSensing'";
+   "macrophageSensing'" -> macrophage_SensingToActing ;
+   macrophage_SensingToActing -> "macrophageActing";
+   "macrophageActing" -> macrophage_processing ;
+   macrophage_processing -> "macrophageActing'";
+   "macrophageActing'" -> macrophage_ActingToMoving ;
+   macrophage_ActingToMoving -> "macrophageMoving";
+}
+
+   bacteriaInfo [shape=box][shape=diamond, label=bacteriaInfo, fontcolor=green, color=green];
+   antibiotic [shape=box][shape=diamond, label=antibiotic, fontcolor=green, color=green];
+   citokine [shape=box][shape=diamond, label=citokine, fontcolor=green, color=green];
+   macrophageInfo [shape=box][shape=diamond, label=macrophageInfo, fontcolor=green, color=green];
+}

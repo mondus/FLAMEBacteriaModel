@@ -1,0 +1,45 @@
+{
+  "environment": { "itEquiv": "1min",  "size": "15mm", "antibiotic_x": "random", "antibiotic_y":"random",
+    "pathogens": ["bacteria"]
+  },
+  "citokine": {
+    "type":"substance",   "decay_rate": "0.01"
+  },
+   "antibiotic": {
+    "type":"substance",   "decay_rate": "0.01", "value":"10"
+  },
+  "bacteria": {
+    "type": "agent", "number":"4000", "max":"262144",
+    "properties": { "velocity": "0.03mm" ,  "divisionRate":"01hr", "pattern":"generated" },
+    "memory": [
+       { "name":"lifetime", "type": "int"} ,
+       {"name":"nAntibodyAttached", "type": "int"},
+       {"name":"deathSignal", "type":"bool","default":"false"},
+       {"name":"antibiotic", "type":"float"},
+       {"name":"infecting", "type":"bool","default":"false"},
+       {"name":"timeInfecting", "type":"int" },
+       {"name":"dividingTime", "type":"bool","default":"false"}
+    ],
+    "inputs":["antibiotic","macrophage"],
+     "actions":[
+      {"name":"move","precond":"infecting=false and dividingTime=false and deathSignal=false"},
+      {"name":"divide","antibiotic":"-10","precond":"dividingTime=true and infecting=false and deathSignal=false", "postcond":"dividingTime=true and environment.bacteria+1"},
+      {"name":"infect","postcond":"infecting=true and deathSignal=false"},
+      {"name":"die", "agents":"macrophage",  "precond":"deathSignal=true"}
+     ]
+  },
+  "macrophage": {
+    "type": "agent", "number":"16384", "max":"16384",
+    "properties": { "velocity": "0.03mm"
+    },
+    "memory": [{ "name":"activated", "type":"bool","default":"false"},
+      { "name":"timeActivated", "type":"int","default":"0" },
+      { "name":"infectionSite", "type":"position"}
+    ],
+    "inputs":["citokine"],
+     "actions":[
+      {"name":"move","precond":"activated=false"},
+      {"name":"directedMove","target":"infectionSite", "precond":"activated=true"}
+     ]
+  }
+}

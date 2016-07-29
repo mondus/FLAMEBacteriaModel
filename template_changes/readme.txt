@@ -1,0 +1,1 @@
+Temp location for FLAME GPU templates which are used for outputing the benchmark graphs.
